@@ -6,6 +6,7 @@ import fs from 'node:fs/promises'
 import process from 'node:process'
 import { glob } from 'tinyglobby'
 import yaml from 'yaml'
+import { defaultFiles } from './constant'
 import { isReleaseType } from './release-type'
 
 interface Interface {
@@ -111,15 +112,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
     commit = { all, noVerify, message: 'chore: release v' }
 
   if (recursive && !raw.files?.length) {
-    raw.files = [
-      'package.json',
-      'package-lock.json',
-      'packages/**/package.json',
-      'jsr.json',
-      'jsr.jsonc',
-      'deno.json',
-      'deno.jsonc',
-    ]
+    raw.files = defaultFiles.getList(recursive)
 
     /** package.json defined in workspace */
     const workspaces: string[] = []
@@ -153,7 +146,7 @@ export async function normalizeOptions(raw: VersionBumpOptions): Promise<Normali
   else {
     raw.files = raw.files?.length
       ? raw.files
-      : ['package.json', 'package-lock.json', 'jsr.json', 'jsr.jsonc', 'deno.json', 'deno.jsonc']
+      : defaultFiles.getList()
   }
 
   const files = await glob(

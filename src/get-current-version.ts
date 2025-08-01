@@ -1,5 +1,6 @@
 import type { Operation } from './operation'
 import { valid as isValidVersion } from 'semver'
+import { defaultFiles } from './constant'
 import { readJsoncFile } from './fs'
 import { isManifest } from './manifest'
 
@@ -14,19 +15,10 @@ export async function getCurrentVersion(operation: Operation): Promise<Operation
   const { cwd, files } = operation.options
 
   // Check all JSON files in the files list
-  const filesToCheck = files.filter(file => file.endsWith('.json'))
+  let filesToCheck = files.filter(file => file.endsWith('.json'))
 
-  // Always check package.json
-  if (!filesToCheck.includes('package.json'))
-    filesToCheck.push('package.json')
-
-  // Always check deno.json
-  if (!filesToCheck.includes('deno.json'))
-    filesToCheck.push('deno.json')
-
-  // Always check deno.jsonc
-  if (!filesToCheck.includes('deno.jsonc'))
-    filesToCheck.push('deno.jsonc')
+  // Always check package.json and deno.json(c)
+  filesToCheck = defaultFiles.primaryComplementer(filesToCheck)
 
   // Check each file, in order, and return the first valid version number we find
   for (const file of filesToCheck) {

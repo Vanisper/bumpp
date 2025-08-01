@@ -1,6 +1,7 @@
 import type { Operation } from './operation'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
+import { defaultFiles } from './constant'
 import { readJsoncFile, readTextFile, writeJsoncFile, writeTextFile } from './fs'
 import { isManifest, isPackageLockManifest } from './manifest'
 import { ProgressEvent } from './types/version-bump-progress'
@@ -44,20 +45,11 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
 
   const name = path.basename(relPath).trim().toLowerCase()
 
-  switch (name) {
-    case 'package.json':
-    case 'package-lock.json':
-    case 'bower.json':
-    case 'component.json':
-    case 'jsr.json':
-    case 'jsr.jsonc':
-    case 'deno.json':
-    case 'deno.jsonc':
-      return updateManifestFile(relPath, operation)
-
-    default:
-      return updateTextFile(relPath, operation)
+  if (defaultFiles.has(name)) {
+    // If the file is in the default files list, we handle it accordingly.
+    return updateManifestFile(relPath, operation)
   }
+  return updateTextFile(relPath, operation)
 }
 
 /**
