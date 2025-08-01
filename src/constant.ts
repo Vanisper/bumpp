@@ -27,7 +27,7 @@ function createPrimaryDefault(fileName: string, recursive = false) {
  * ---
  *
  * NOTE: Don't use `for-in` loops on this object,
- * plz use `itself.list` or `itself.raw` instead.
+ * plz use `itself.getList` or `itself.raw` .etc instead.
  */
 export const defaultFiles = (() => {
   const defaults = [
