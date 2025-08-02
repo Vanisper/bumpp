@@ -45,7 +45,7 @@ async function updateFile(relPath: string, operation: Operation): Promise<boolea
 
   const name = path.basename(relPath).trim().toLowerCase()
 
-  if (defaultFiles.has(name)) {
+  if (defaultFiles.has(name, true)) {
     // If the file is in the default files list, we handle it accordingly.
     return updateManifestFile(relPath, operation)
   }

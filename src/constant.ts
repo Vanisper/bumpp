@@ -36,6 +36,7 @@ export const defaultFiles = (() => {
     createDefault('package-lock.json'),
     createPrimaryDefault('deno.json'),
     createPrimaryDefault('deno.jsonc'),
+    createPrimaryDefault('Cargo.toml'),
     createDefault('jsr.json'),
     createDefault('jsr.jsonc'),
   ]
@@ -55,11 +56,17 @@ export const defaultFiles = (() => {
     },
     /**
      * Checks if a file name or glob is in the default files list.
-     * @description If `full` is true, it checks against glob patterns as well.
+     * @param fileName - The name or glob pattern to check.
+     * @param insensitive - Whether to ignore case when checking the file name.
+     * @param full - Whether to check against the full glob patterns.
      */
-    has(fileName: string, full = false) {
-      return defaults.some(file => file.name === fileName
-        || (full && file.glob && file.glob === fileName))
+    has(fileName: string, insensitive = false, full = false) {
+      return defaults.some((file) => {
+        const nameMatch = insensitive
+          ? file.name.trim().toLowerCase() === fileName.trim().toLowerCase()
+          : file.name === fileName
+        return nameMatch || (full && file.glob && file.glob === fileName)
+      })
     },
     /**
      * Returns a list of primary file names.
